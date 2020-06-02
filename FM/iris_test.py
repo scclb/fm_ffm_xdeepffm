@@ -53,8 +53,9 @@ test_db = get_db(te_x,  te_y)
 # ==============================
 # 三、模型训练与评估
 # ==============================
+# 模型构建
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import LinearSVR
+from sklearn.svm import LinearSVC
 if __name__ == '__main__':
     tr_x, te_x, tr_y, te_y = get_dt()
     train_db = get_db(tr_x, tr_y)
@@ -64,29 +65,37 @@ if __name__ == '__main__':
     model, log_dict = fm_model.train(train_db, lr=0.03, l1=0., l2= 0.02, epochs = 55, print_eval=10
             , test_flg=True, test_db=test_db, log_dict={'te_loss_lst':[], 'tr_loss_lst':[], 'acc_lst':[]} )
 
-    svr = LinearSVR(loss='squared_epsilon_insensitive')
+    svc = LinearSVC(loss='squared_epsilon_insensitive')
     rf = RandomForestClassifier(class_weight ='balanced')
-    svr.fit(tr_x, tr_y)
+    svc.fit(tr_x, tr_y)
     rf.fit(tr_x, tr_y)
     rf_p = rf.predict(te_x)
-    svr_p = rf.predict(te_x)
+    svc_p = rf.predict(te_x)
     print('rd_acc:', sum(rf_p == te_y)/len(te_y))
-    print('svr_acc:', sum(svr_p == te_y)/len(te_y))
+    print('svc_acc:', sum(svc_p == te_y)/len(te_y))
 
 """
-<EPOCH:46-step:11>: tr_loss: 0.69547, tr_acc:100.00%, te_loss: 0.75744, acc:93.33%
-<EPOCH:47-step:11>: tr_loss: 0.71907, tr_acc:90.00%, te_loss: 0.75491, acc:93.33%
-<EPOCH:48-step:11>: tr_loss: 0.68536, tr_acc:100.00%, te_loss: 0.75248, acc:93.33%
-<EPOCH:49-step:11>: tr_loss: 0.68096, tr_acc:100.00%, te_loss: 0.75015, acc:93.33%
-<EPOCH:50-step:11>: tr_loss: 0.73316, tr_acc:90.00%, te_loss: 0.74792, acc:93.33%
-<EPOCH:51-step:11>: tr_loss: 0.67411, tr_acc:100.00%, te_loss: 0.74578, acc:93.33%
-<EPOCH:52-step:11>: tr_loss: 0.65557, tr_acc:100.00%, te_loss: 0.74372, acc:93.33%
-<EPOCH:53-step:11>: tr_loss: 0.76967, tr_acc:80.00%, te_loss: 0.74174, acc:93.33%
-<EPOCH:54-step:11>: tr_loss: 0.68706, tr_acc:100.00%, te_loss: 0.73983, acc:93.33%
-<EPOCH:55-step:11>: tr_loss: 0.73828, tr_acc:80.00%, te_loss: 0.73800, acc:93.33%
-LinearSVR(C=1.0, dual=True, epsilon=0.0, fit_intercept=True,
-     intercept_scaling=1.0, loss='squared_epsilon_insensitive',
-     max_iter=1000, random_state=None, tol=0.0001, verbose=0)
+...
+<EPOCH:41-step:11>: tr_loss: 0.77262, tr_acc:90.00%, te_loss: 0.71665, acc:100.00%
+<EPOCH:42-step:11>: tr_loss: 0.72914, tr_acc:90.00%, te_loss: 0.71331, acc:100.00%
+<EPOCH:43-step:11>: tr_loss: 0.70957, tr_acc:100.00%, te_loss: 0.71013, acc:100.00%
+<EPOCH:44-step:11>: tr_loss: 0.72849, tr_acc:100.00%, te_loss: 0.70709, acc:100.00%
+<EPOCH:45-step:11>: tr_loss: 0.72811, tr_acc:100.00%, te_loss: 0.70418, acc:100.00%
+<EPOCH:46-step:11>: tr_loss: 0.67915, tr_acc:100.00%, te_loss: 0.70140, acc:100.00%
+<EPOCH:47-step:11>: tr_loss: 0.76788, tr_acc:90.00%, te_loss: 0.69874, acc:100.00%
+<EPOCH:48-step:11>: tr_loss: 0.76780, tr_acc:90.00%, te_loss: 0.69619, acc:100.00%
+<EPOCH:49-step:11>: tr_loss: 0.74231, tr_acc:100.00%, te_loss: 0.69374, acc:100.00%
+<EPOCH:50-step:11>: tr_loss: 0.65924, tr_acc:100.00%, te_loss: 0.69139, acc:100.00%
+<EPOCH:51-step:11>: tr_loss: 0.66295, tr_acc:100.00%, te_loss: 0.68913, acc:100.00%
+<EPOCH:52-step:11>: tr_loss: 0.78200, tr_acc:80.00%, te_loss: 0.68696, acc:100.00%
+<EPOCH:53-step:11>: tr_loss: 0.74962, tr_acc:90.00%, te_loss: 0.68487, acc:100.00%
+<EPOCH:54-step:11>: tr_loss: 0.65690, tr_acc:100.00%, te_loss: 0.68286, acc:100.00%
+<EPOCH:55-step:11>: tr_loss: 0.72583, tr_acc:80.00%, te_loss: 0.68092, acc:100.00%
+LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
+     intercept_scaling=1, loss='squared_epsilon_insensitive',
+     max_iter=1000, multi_class='ovr', penalty='l2', random_state=None,
+     tol=0.0001, verbose=0)
+
 RandomForestClassifier(bootstrap=True, class_weight='balanced',
             criterion='gini', max_depth=None, max_features='auto',
             max_leaf_nodes=None, min_impurity_decrease=0.0,
@@ -94,6 +103,6 @@ RandomForestClassifier(bootstrap=True, class_weight='balanced',
             min_samples_split=2, min_weight_fraction_leaf=0.0,
             n_estimators=10, n_jobs=None, oob_score=False,
             random_state=None, verbose=0, warm_start=False)
-rd_acc: 0.8333333333333334
-svr_acc: 0.8333333333333334
+rd_acc: 1.0
+svc_acc: 1.0
 """
