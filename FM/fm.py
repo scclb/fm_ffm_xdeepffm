@@ -106,28 +106,27 @@ class FM_model(tf.keras.Model):
                 grads = tape.gradient(loss, model.trainable_variables)
                 # silence_只是为了减少不必要的输出
                 silence_ = optim_.apply_gradients(zip(grads, model.trainable_variables))
-
-            
-            if step % print_eval and step >= print_eval:
-                if test_flg:
-                    corrects, total, loss_add = 0, 0, 0
-                    n = 0
-                    for xte, yte in test_db:
-                        outi = model.forward(xte)
-                        loss_add += model.loss(yte, outi).numpy()
-                        corrects += model.corrects_(yte, outi)
-                        total += xte.shape[0]
-                        n += 1
-                    te_loss = loss_add/n
-                    acc = corrects/total
-                    acc_tr = model.corrects_(y, out)/x.shape[0]
-                    log_dict['te_loss_lst'].append(te_loss)
-                    log_dict['tr_loss_lst'].append(loss.numpy())
-                    log_dict['acc_lst'].append(acc.numpy())
-                    print(f'<EPOCH:{epoch}-step:{step}>: tr_loss: {loss.numpy():.5f}, tr_acc:{acc_tr*100:.2f}%, te_loss: {te_loss:.5f}, acc:{acc*100:.2f}%')
-                else:
-                    acc = model.corrects_(y, out) / x.shape[0]
-                    print(f'<EPOCH:{epoch}-step:{step}>: tr_loss: {loss.numpy():.5f}, acc:{acc*100:.2f}%')
+                
+                if (step % print_eval == 0):
+                    if test_flg:
+                        corrects, total, loss_add = 0, 0, 0
+                        n = 0
+                        for xte, yte in test_db:
+                            outi = model.forward(xte)
+                            loss_add += model.loss(yte, outi).numpy()
+                            corrects += model.corrects_(yte, outi)
+                            total += xte.shape[0]
+                            n += 1
+                        te_loss = loss_add/n
+                        acc = corrects/total
+                        acc_tr = model.corrects_(y, out)/x.shape[0]
+                        log_dict['te_loss_lst'].append(te_loss)
+                        log_dict['tr_loss_lst'].append(loss.numpy())
+                        log_dict['acc_lst'].append(acc.numpy())
+                        print(f'<EPOCH:{epoch}-step:{step}>: tr_loss: {loss.numpy():.5f}, tr_acc:{acc_tr*100:.2f}%, te_loss: {te_loss:.5f}, acc:{acc*100:.2f}%')
+                    else:
+                        acc = model.corrects_(y, out) / x.shape[0]
+                        print(f'<EPOCH:{epoch}-step:{step}>: tr_loss: {loss.numpy():.5f}, acc:{acc*100:.2f}%')
 
         return  model, log_dict
 
