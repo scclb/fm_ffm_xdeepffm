@@ -32,11 +32,19 @@ class FMdense(layers.Layer):
     def call(self, x):
         """
         线性+线性交互
+        修改成下列形式
         """
-        y_out = (x@self.keneral  + self.b
-        + 0.5 * tf.reduce_sum(
-            (tf.pow( x@self.v, 2)  -  tf.pow(x,2) @ tf.pow(self.v, 2))
-            ,axis=1, keepdims=True))
+#         y_out = (x@self.keneral  + self.b
+#         + 0.5 * tf.reduce_sum(
+#             (tf.pow( x@self.v, 2)  -  tf.pow(x,2) @ tf.pow(self.v, 2))
+#             ,axis=1, keepdims=True))
+            y_linear = tf.add( tf.matmul(x, self.keneral), self.b)
+            y_xx =  0.5*tf.reduce_sum( tf.subtract(tf.pow( tf.matmul(x, self.v), 2)
+                                                    , tf.matmul(tf.pow(x,2), tf.pow(self.v, 2)))
+                                    ,axis=1, keepdims=True )
+            y_out = tf.add(y_linear, y_xx)
+        return self.active(y_out)
+
         return self.active(y_out)
 
 
